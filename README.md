@@ -103,7 +103,128 @@ sequenceDiagram
     end
 ```
 ### システム構成図
+```mermaid
+flowchart BT
+    subgraph Heroku
+        subgraph Laravel
+            API
+        end
+    end
+    subgraph Supabase
+        postgres[(postgres)]
+    end
+    Cloudflare[Cloudflare R2]
+    Laravel --- postgres
+    Laravel --- Cloudflare
+    Laravel --> Slack
+    subgraph Vercel
+        subgraph Next[Next.js]
+            subgraph マイページ
+                予約申込画面
+            end
+            予約管理画面
+        end
+    end
+    Next --- API
+```
+
 ### ER図
+```mermaid
+erDiagram
+    Customer ||--o{ Reservation : "客は0以上の予約を持つ"
+    Reservation ||--o{ StoreUser : "予約は0以上の指名スタイリストを持つ"
+    Reservation ||--|{ ReservationService : "予約は1つ以上の予約サービスを持つ"
+    Reservation ||--o{ ReservationOption : "予約は0以上の予約オプションを持つ"
+    Reservation ||--o| Visit : "予約は0か1の来店履歴を持つ"
+    Customer ||--o{ Visit : "客は0以上の来店履歴を持つ"
+    Visit ||--|{ StoreUser : "来店履歴は1以上の担当スタイリストを持つ"
+    Visit ||--|{ UtilizedService : "来店履歴は1つ以上の利用サービスを持つ"
+    Visit ||--o{ UtilizedOption : "来店履歴は0以上の利用オプションを持つ"
+    Service ||--o{ ReservationService : "予約サービスはサービスに紐づく"
+    Option ||--o{ ReservationOption : "予約オプションはオプションに紐づく"
+    Service ||--o{ UtilizedService : "利用サービスはサービスに紐づく"
+    Option ||--o{ UtilizedOption : "利用オプションはオプションに紐づく"
+    StoreUser ||--|| StoreUserJob : "ストアユーザは１つの役職をもつ"
+
+    Customer {
+        int id PK
+    }
+    
+    Reservation {
+        int id PK   
+        int customer_id FK "予約客ID"
+        int stylist_store_user_id FK "指名スタイリスト"
+        int visit_id FK "来店履歴ID"
+        int start "開始時刻"
+        int period_min "利用予定時間(分)"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+
+    ReservationService {
+        int id PK
+        int reservation_id FK "予約ID"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+    ReservationOption {
+        int id PK
+        int reservation_id FK "予約ID"
+        int reservation_service_id FK "予約サービスID"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+
+    StoreUser {
+        int id PK
+        int job_id "役職ID"
+    }
+
+    StoreUserJob {
+        int id PK
+        string name "役職名"
+    }
+
+    Service {
+        int id PK
+        int price_out_tax "税別料金"
+        int minute "施術時間(分)"
+    }
+
+    Option {
+        int id PK
+        int price_out_tax "税別料金"
+        int minute "施術時間(分)"
+    }
+
+    Visit {
+        int id PK
+        int customer_id FK "来店客ID"
+        int stylist_store_user_id FK "担当スタイリスト"
+        int start "来店時刻"
+        int end "退店時刻"
+        int period_min "利用時間(分)"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+
+    UtilizedService {
+        int id PK
+        int visit_id FK "来店ID"
+        int service_id FK "サービスID"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+
+    UtilizedOption {
+        int id PK
+        int visit_id FK "来店ID"
+        int service_id FK "オプションID"
+        int price_out_tax "税別料金"
+        int price_in_tax "税込料金"
+    }
+```
+
 ### テーブル定義書
 ### 機能一覧表
 ### 設計書記述様式
