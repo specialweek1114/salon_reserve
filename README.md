@@ -131,34 +131,67 @@ flowchart BT
 ### ER図
 ```mermaid
 erDiagram
-    Customer ||--o{ Reservation : "客は0以上の予約を持つ"
-    Reservation ||--o{ StoreUser : "予約は0以上の指名スタイリストを持つ"
+    User ||--o{ Reservation : "客は0以上の予約を持つ"
+    Reservation ||--o{ User : "予約は0以上の指名スタイリストを持つ"
     Reservation ||--|{ ReservationService : "予約は1つ以上の予約サービスを持つ"
     Reservation ||--o{ ReservationOption : "予約は0以上の予約オプションを持つ"
     Reservation ||--o| Visit : "予約は0か1の来店履歴を持つ"
-    Customer ||--o{ Visit : "客は0以上の来店履歴を持つ"
-    Visit ||--|{ StoreUser : "来店履歴は1以上の担当スタイリストを持つ"
+    User ||--o{ Visit : "客は0以上の来店履歴を持つ"
+    Visit ||--|{ User : "来店履歴は1以上の担当スタイリストを持つ"
     Visit ||--|{ UtilizedService : "来店履歴は1つ以上の利用サービスを持つ"
     Visit ||--o{ UtilizedOption : "来店履歴は0以上の利用オプションを持つ"
     Service ||--o{ ReservationService : "予約サービスはサービスに紐づく"
     Option ||--o{ ReservationOption : "予約オプションはオプションに紐づく"
     Service ||--o{ UtilizedService : "利用サービスはサービスに紐づく"
     Option ||--o{ UtilizedOption : "利用オプションはオプションに紐づく"
-    StoreUser ||--|| StoreUserJob : "ストアユーザは１つの役職をもつ"
+    User ||--|| UserType : "ユーザは１つのユーザ種別をもつ"
+    User ||--o| Stylist : "店側ユーザはスタイリストにすることが可能"
 
-    Customer {
+    User {
         int id PK
+        int type_id FK "ユーザ種別ID"
+        string name "名前"
+        string email "Eメール"
+        string password "パスワード"
+        tinyint is_valid "1:有効 0:無効"
+        datetime mypage_last_login "最終ログイン日時"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
+    }
+
+    UserType {
+        int id PK
+        string name "ユーザ種別名"
+        tinyint is_valid "1:有効 0:無効"
+        datetime created "作成日時"
+    }
+
+    Stylist {
+        int id PK
+        int user_id FK "ユーザID"
+        tinyint is_valid "1:有効 0:無効"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
     
     Reservation {
         int id PK   
-        int customer_id FK "予約客ID"
-        int stylist_store_user_id FK "指名スタイリスト"
+        int customer_user_id FK "予約客ID"
+        int stylist_user_id FK "指名スタイリスト"
         int visit_id FK "来店履歴ID"
         int start "開始時刻"
         int period_min "利用予定時間(分)"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
+        tinyint status "0:予約確定前,10:予約確定,20:来店,99:キャンセル"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     ReservationService {
@@ -166,6 +199,10 @@ erDiagram
         int reservation_id FK "予約ID"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
     ReservationOption {
         int id PK
@@ -173,28 +210,32 @@ erDiagram
         int reservation_service_id FK "予約サービスID"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
-    }
-
-    StoreUser {
-        int id PK
-        int job_id "役職ID"
-    }
-
-    StoreUserJob {
-        int id PK
-        string name "役職名"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     Service {
         int id PK
         int price_out_tax "税別料金"
         int minute "施術時間(分)"
+        tinyint is_valid "1:有効 0:無効"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     Option {
         int id PK
         int price_out_tax "税別料金"
         int minute "施術時間(分)"
+        tinyint is_valid "1:有効 0:無効"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     Visit {
@@ -206,6 +247,11 @@ erDiagram
         int period_min "利用時間(分)"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
+        tinyint status "20:来店,30:退店"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     UtilizedService {
@@ -214,18 +260,28 @@ erDiagram
         int service_id FK "サービスID"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 
     UtilizedOption {
         int id PK
         int visit_id FK "来店ID"
-        int service_id FK "オプションID"
+        int option_id FK "オプションID"
         int price_out_tax "税別料金"
         int price_in_tax "税込料金"
+        datetime created "作成日時"
+        int create_user_id "作成者ID"
+        datetime updated "更新日時"
+        int update_user_id "更新者ID"
     }
 ```
 
 ### テーブル定義書
+
+
 ### 機能一覧表
 ### 設計書記述様式
 ### 基本設計書（外部設計書）	
