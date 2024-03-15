@@ -118,14 +118,14 @@ flowchart BT
     Laravel --- Cloudflare
     Laravel --> Slack
     subgraph Vercel
-        subgraph Next[Next.js]
+        subgraph Vue[Vite-Vue3]
             subgraph マイページ
                 予約申込画面
             end
             予約管理画面
         end
     end
-    Next --- API
+    Vue --- API
 ```
 
 ### ER図
