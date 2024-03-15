@@ -133,13 +133,11 @@ flowchart BT
 erDiagram
     User ||--o{ Reservation : "客は0以上の予約を持つ"
     Reservation ||--o{ User : "予約は0以上の指名スタイリストを持つ"
-    Seat ||--o{ Reservation : "席は0以上の予約を持つ"
     Reservation ||--|{ ReservationService : "予約は1つ以上の予約サービスを持つ"
     Reservation ||--o{ ReservationOption : "予約は0以上の予約オプションを持つ"
     Reservation ||--o| Visit : "予約は0か1の来店履歴を持つ"
     User ||--o{ Visit : "客は0以上の来店履歴を持つ"
     Visit ||--|{ User : "来店履歴は1以上の担当スタイリストを持つ"
-    Seat ||--o{ Visit : "席は0以上の来店履歴を持つ"
     Visit ||--|{ UtilizedService : "来店履歴は1つ以上の利用サービスを持つ"
     Visit ||--o{ UtilizedOption : "来店履歴は0以上の利用オプションを持つ"
     Service ||--o{ ReservationService : "予約サービスはサービスに紐づく"
@@ -179,21 +177,10 @@ erDiagram
         datetime updated "更新日時"
         int update_user_id "更新者ID"
     }
-
-    Seat {
-        int id PK
-        string name "席名"
-        tinyint is_valid "1:有効 0:無効"
-        datetime created "作成日時"
-        int create_user_id "作成者ID"
-        datetime updated "更新日時"
-        int update_user_id "更新者ID"
-    }
     
     Reservation {
         int id PK   
         int customer_user_id FK "予約客ID"
-        int seat_id FK "席ID"
         int stylist_user_id FK "指名スタイリスト"
         int visit_id FK "来店履歴ID"
         int start "開始時刻"
@@ -217,7 +204,6 @@ erDiagram
         datetime updated "更新日時"
         int update_user_id "更新者ID"
     }
-
     ReservationOption {
         int id PK
         int reservation_id FK "予約ID"
@@ -255,7 +241,6 @@ erDiagram
     Visit {
         int id PK
         int customer_id FK "来店客ID"
-        int seat_id FK "席ID"
         int stylist_store_user_id FK "担当スタイリスト"
         int start "来店時刻"
         int end "退店時刻"
@@ -294,7 +279,7 @@ erDiagram
     }
 ```
 
-### [テーブル定義書](./create_table.sql])
+### テーブル定義書
 
 ### 機能一覧表
 |サブシステム|機能分類|機能|入力|照会|帳票|バッチ|内容|
