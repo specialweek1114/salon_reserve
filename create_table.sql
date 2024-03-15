@@ -60,6 +60,26 @@ COMMENT ON COLUMN Stylist.create_user_id IS '作成者ID';
 COMMENT ON COLUMN Stylist.updated IS '更新日時';
 COMMENT ON COLUMN Stylist.update_user_id IS '更新者ID';
 
+CREATE TABLE Seat (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR,
+    is_valid TINYINT,
+    created TIMESTAMP,
+    create_user_id INT,
+    updated TIMESTAMP,
+    update_user_id INT
+)
+
+COMMENT ON TABLE Seat IS '席';
+
+COMMENT ON COLUMN Seat.id IS 'ID';
+COMMENT ON COLUMN Seat.name IS '席名';
+COMMENT ON COLUMN Seat.is_valid IS '1:有効 0:無効';
+COMMENT ON COLUMN Seat.created IS '作成日時';
+COMMENT ON COLUMN Seat.create_user_id IS '作成者ID';
+COMMENT ON COLUMN Seat.updated IS '更新日時';
+COMMENT ON COLUMN Seat.update_user_id IS '更新者ID';
+
 CREATE TABLE Reservation (
     id SERIAL PRIMARY KEY,
     customer_user_id INT REFERENCES User (id),
