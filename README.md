@@ -117,6 +117,7 @@ flowchart BT
     Laravel --- postgres
     Laravel --- Cloudflare
     Laravel --> Slack
+    Laravel --> Gmail[Gmail SMTPサーバー]
     subgraph Vercel
         subgraph Vue[Vite-Vue3]
             subgraph マイページ
